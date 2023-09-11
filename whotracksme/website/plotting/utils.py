@@ -39,14 +39,13 @@ def set_line_style(color, width=3, line_style="solid"):
     Returns: line_style dict parameters
 
     """
-    style = dict(
+    return dict(
         color=color,
         width=width,
         # shape='spline',
         # smoothing=1.3,
-        dash=line_style
+        dash=line_style,
     )
-    return style
 
 
 def annotation(text, x, y, background_color, shift_x=-1, text_size=12, color="white"):

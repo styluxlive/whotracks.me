@@ -22,10 +22,9 @@ async def fetch(session, url):
 
 
 async def fetch_all(session, urls, loop):
-    results = await asyncio.gather(
+    return await asyncio.gather(
         *[loop.create_task(fetch(session, url)) for url in urls]
     )
-    return results
 
 
 def retrieve_status(urls):

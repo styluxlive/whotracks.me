@@ -33,10 +33,7 @@ def get_company_name(company_dict):
 
 
 def website_doughnout(site, data):
-    category_dict = dict()
-    for category, frequency in data.sites.get_site_tracker_categories(site):
-        category_dict[category] = frequency
-
+    category_dict = dict(data.sites.get_site_tracker_categories(site))
     return list(category_dict.values()), list(category_dict.keys()), sum(category_dict.values())
 
 

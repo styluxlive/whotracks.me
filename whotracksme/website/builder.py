@@ -182,7 +182,7 @@ class Builder:
                 build_trackers_list(data=data_source)
 
                 # Websites
-                websites = list(enumerate([id for id, _ in data_source.sites.iter()]))
+                websites = list(enumerate(id for id, _ in data_source.sites.iter()))
                 batched_job(websites, build_website_pages_batch, 400, "Generate website pages")
                 build_website_list(data=data_source)
 

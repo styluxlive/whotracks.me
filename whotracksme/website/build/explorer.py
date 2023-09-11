@@ -114,7 +114,7 @@ def build_explorer():
     )
     shutil.rmtree(temp_folder.as_posix(), ignore_errors=True)
 
-    with open(f"_site/explorer.html", "w") as output:
+    with open("_site/explorer.html", "w") as output:
         output.write(render_template(
             template=get_template(data, name="explorer.html"),
             download_link=f"data/wtm-data-{month}.zip"

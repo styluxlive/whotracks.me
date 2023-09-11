@@ -37,27 +37,15 @@ def iterate_bucket(s3_client, bucket_name, bucket_prefix):
 def get_max_age(path, filename):
     if path.startswith('static/'):
         # font resources: one month cache
-        if 'font-awesome-4.7.0' in path or 'fonts' in path:
-            return 2592000
-        # minified JS: one week cache
-        if '.min.js' in filename or '.min.css' in filename:
-            return 604800
-        # one week cache
-        return 604800
+        return 2592000 if 'font-awesome-4.7.0' in path or 'fonts' in path else 604800
     elif path.startswith('data/'):
         # trackerdb: 1day cache
-        if 'trackerdb.' in path:
-            return 86400
-        # rest of data directory: 1 week cache
-        return 604800
+        return 86400 if 'trackerdb.' in path else 604800
     # default 1day cache for html pages
     return 86400
 
 def get_cache_control(path, filename, production=False):
-    if not production:
-        # one minute cache
-        return 'max-age=60'
-    return f'max-age={get_max_age(path, filename)}'
+    return f'max-age={get_max_age(path, filename)}' if production else 'max-age=60'
 
 
 def get_content_type(local_path):
@@ -166,17 +154,16 @@ if __name__ == '__main__':
 
         # setup redirects
         html_path = f'{s3_path}.html'
-        if html_path in existing_keys:
-            print(f'redirect {html_path} to /{s3_path}')
-            if not dry_run:
-                s3_client.put_object(Bucket=bucket_name, Key=html_path,
-                                     WebsiteRedirectLocation=f'/{s3_path}',
-                                     ACL='public-read')
-            # upload + redirect
-            return True, True
-        else:
+        if html_path not in existing_keys:
             # upload, no redirect
             return True, False
+        print(f'redirect {html_path} to /{s3_path}')
+        if not dry_run:
+            s3_client.put_object(Bucket=bucket_name, Key=html_path,
+                                 WebsiteRedirectLocation=f'/{s3_path}',
+                                 ACL='public-read')
+        # upload + redirect
+        return True, True
 
     if debug_mode:
         for (dirpath, dirnames, filenames) in os.walk(site_dir):

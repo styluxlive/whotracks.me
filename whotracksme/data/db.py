@@ -84,9 +84,13 @@ def create_tracker_map(db, with_iab_vendors=False):
 
     if with_iab_vendors:
         vendorlist = get_iab_vendorlist()
-        include_vendors = set([int(tracker['iab_vendor'])
-            for tracker in itertools.chain(trackers.values(), companies.values())
-            if tracker['iab_vendor'] is not None])
+        include_vendors = {
+            int(tracker['iab_vendor'])
+            for tracker in itertools.chain(
+                trackers.values(), companies.values()
+            )
+            if tracker['iab_vendor'] is not None
+        }
         tracker_map['iab'] = {
             'vendorListVersion': vendorlist['vendorListVersion'],
             'purposes': vendorlist['purposes'],
@@ -104,16 +108,13 @@ iab_vendorlist_url = 'https://vendorlist.consensu.org/vendorlist.json'
 
 
 def get_iab_vendorlist():
-    iab_list = json.loads(requests.get(iab_vendorlist_url).content)
-    return iab_list
+    return json.loads(requests.get(iab_vendorlist_url).content)
 
 
 INT_COLUMNS = ['site_reach_top10k', 'reach_rank', 'site_reach_rank', 'site_rank', 'tracker_rank']
 
 def get_column_type(col):
-    if col in INT_COLUMNS:
-        return 'INTEGER'
-    return 'REAL'
+    return 'INTEGER' if col in INT_COLUMNS else 'REAL'
 
 BASE_DATA_COLUMNS = [
     "cookies",
@@ -255,9 +256,7 @@ class WhoTracksMeDB:
         cursor = self.connection.cursor()
         cursor.execute('SELECT checksum FROM import_checksums WHERE filename = ?', (filename, ))
         result = cursor.fetchone()
-        if result is not None:
-            return result[0]
-        return ''
+        return result[0] if result is not None else ''
 
     def update_file_checksum(self, filename, checksum):
         self.connection.execute('DELETE FROM import_checksums WHERE filename = ?', (filename, ))
@@ -283,16 +282,14 @@ class WhoTracksMeDB:
 
                 def parse_col_value(name, value):
                     try:
-                        if name in INT_COLUMNS:
-                            return int(value)
-                        return float(value)
+                        return int(value) if name in INT_COLUMNS else float(value)
                     except:
                         return None
 
                 for row in reader:
                     rowtuple = [row['month'], row['country']] + \
-                        [row[col] for col in name_columns] + \
-                        [parse_col_value(col, row.get(col, '')) for col in DATA_COLUMNS[name]]
+                            [row[col] for col in name_columns] + \
+                            [parse_col_value(col, row.get(col, '')) for col in DATA_COLUMNS[name]]
                     rows.append(tuple(rowtuple))
 
                 columns = ','.join(['?'] * (len(DATA_COLUMNS[name]) + len(name_columns) + 2))
