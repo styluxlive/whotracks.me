@@ -14,9 +14,9 @@ class TestDataIntegrity(unittest.TestCase):
         trackers = self.ds.trackers
         cur = self.conn.cursor()
         app_ids = [row.id for row in trackers.get_snapshot()]
-        db_trackers = cur.execute('select id, category_id from trackers where id IN ({}) order by id'.format(
-            ','.join(["'{}'".format(id) for id in app_ids])
-        )).fetchall()
+        db_trackers = cur.execute(
+            f"""select id, category_id from trackers where id IN ({','.join([f"'{id}'" for id in app_ids])}) order by id"""
+        ).fetchall()
         self.assertEqual(set(app_ids), set(map(itemgetter(0), db_trackers)))
         # check all have a category
         without_category = list(filter(lambda tracker: tracker[1] is None, db_trackers))
@@ -28,12 +28,12 @@ class TestDataIntegrity(unittest.TestCase):
         company_ids = sorted([row.id for row in companies.get_snapshot()])
 
         # company_id can be a company id or tracker id
-        db_companies = cur.execute('select id from companies where id IN ({}) order by id'.format(
-            ','.join(["'{}'".format(id) for id in company_ids])
-        )).fetchall()
-        db_trackers = cur.execute('select id, category_id from trackers where id IN ({}) order by id'.format(
-            ','.join(["'{}'".format(id) for id in company_ids])
-        )).fetchall()
+        db_companies = cur.execute(
+            f"""select id from companies where id IN ({','.join([f"'{id}'" for id in company_ids])}) order by id"""
+        ).fetchall()
+        db_trackers = cur.execute(
+            f"""select id, category_id from trackers where id IN ({','.join([f"'{id}'" for id in company_ids])}) order by id"""
+        ).fetchall()
         self.assertEqual(set(company_ids), set(map(itemgetter(0), db_companies)) | set(map(itemgetter(0), db_trackers)))
 
 

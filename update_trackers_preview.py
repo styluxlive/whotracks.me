@@ -98,9 +98,12 @@ def generate_trackers_preview(privacy_score):
 
     """
     sorted_categories = sorted(list_known_categories(privacy_score))
-    trackers = dict()
-    for entry in privacy_score.values():
-        trackers[entry['site']] = [entry['categories'].get(cat, 0) for cat in sorted_categories]
+    trackers = {
+        entry['site']: [
+            entry['categories'].get(cat, 0) for cat in sorted_categories
+        ]
+        for entry in privacy_score.values()
+    }
     return { 'trackers': trackers, 'categories': sorted_categories }
 
 def write_json(data, path):
@@ -110,8 +113,7 @@ def write_json(data, path):
 
 if __name__ == "__main__":
     args = docopt(__doc__)
-    local_file = args['INPUT']
-    if local_file:
+    if local_file := args['INPUT']:
         print(f'Loading local file: {local_file} ...')
         privacy_score = json.loads(open(local_file, mode='r').read())
     else:

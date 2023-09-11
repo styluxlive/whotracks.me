@@ -1,7 +1,7 @@
 import unittest
 import csv
 
-VALID_CATEGORIES = set([
+VALID_CATEGORIES = {
     "Adult",
     "Banking",
     "Business",
@@ -12,8 +12,8 @@ VALID_CATEGORIES = set([
     "News and Portals",
     "Political",
     "Recreation",
-    "Reference"
-])
+    "Reference",
+}
 
 def iterate_site_categories():
     with open('./whotracksme/data/assets/site_categories.csv', 'r') as fp:

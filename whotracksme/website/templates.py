@@ -110,7 +110,7 @@ def copy_custom_error_pages(data):
     }
 
     for error, template in error_pages.items():
-        with open('_site/{}.html'.format(error), 'w') as output:
+        with open(f'_site/{error}.html', 'w') as output:
             output.write(render_template(template=template, path_to_root=''))
 
 

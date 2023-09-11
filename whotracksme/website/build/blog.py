@@ -46,7 +46,7 @@ def parse_blogpost(filepath):
             "description": meta.get("description", ""),
             "author": meta.get("author", "").capitalize(),
             "type": meta["type"],
-            "publish": bool(meta["publish"] == "True"),
+            "publish": meta["publish"] == "True",
             "date": meta["date"],
             "repr_date": get_human_date(meta["date"]),
             "tags": meta["tags"].split(":")[-1].split(","),

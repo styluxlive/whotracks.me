@@ -61,7 +61,7 @@ def website_page(template, site, rank, data):
     # apps per site data
     tracker_table = list(data.sites.get_tracker_list(site_id))
 
-    with open('_site/websites/{}.html'.format(site.site), 'w') as output:
+    with open(f'_site/websites/{site.site}.html', 'w') as output:
         output.write(render_template(
             path_to_root='..',
             template=template,

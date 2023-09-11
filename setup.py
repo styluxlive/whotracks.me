@@ -39,7 +39,7 @@ class SDistCheckVersion(sdist):
 
     def run(self):
         if VERSION == DEFAULT_VERSION:
-            raise Exception(f"$WTM_VERSION was not specified in environment. Aborting.")
+            raise Exception("$WTM_VERSION was not specified in environment. Aborting.")
 
         # Only run `sdist` if we found a valid version in environment.
         sdist.run(self)

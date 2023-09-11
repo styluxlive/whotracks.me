@@ -94,9 +94,7 @@ class DataSource:
 
     def get_company_name(self, id):
         result = self.db.connection.execute('SELECT name FROM companies WHERE id = ?', (id,)).fetchone()
-        if result is not None:
-            return result[0]
-        return id
+        return result[0] if result is not None else id
 
 def parse_date(date_string):
     return datetime.strptime(date_string, '%Y-%m')
@@ -157,9 +155,7 @@ class SQLDataLoader:
             {self.get_data_query()}
             WHERE {self.table_name}.country= ? AND month = ? AND {self.id_column} = ?
         ''', (self.region, month or self.last_month, id)).fetchone()
-        if result is not None:
-            return self.rowType._make(result)
-        return None
+        return self.rowType._make(result) if result is not None else None
 
     def dump(self):
         cursor = self.db.connection.execute(f'''
@@ -296,7 +292,7 @@ class Trackers(SQLDataLoader):
             return 'Very prevalent'
         if 51 <= r <= 100:
             return 'Commonly prevalent'
-        if 101 <= r:
+        if r >= 101:
             return 'Relatively prevalent'
 
     def get_tracking_methods(self, id):
@@ -397,8 +393,7 @@ class Trackers(SQLDataLoader):
             print(e)
 
     def iter_sites(self, id):
-        for site in self.sites.get_tracker(id).itertuples():
-            yield site
+        yield from self.sites.get_tracker(id).itertuples()
 
 
 SiteTrackerEntry = namedtuple('SiteTrackerEntry', 'site, tracker, name, category, company_id, company, site_proportion')

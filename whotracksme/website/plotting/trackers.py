@@ -84,10 +84,7 @@ def tracker_reach_ts(ts1, ts2, t):
 
     # makes sure that whichever is smallest
     # will be on top (displaying color correctly)
-    if mean(ts1) > mean(ts2):
-        data = [trace0, trace1]
-    else:
-        data = [trace1, trace0]
+    data = [trace0, trace1] if mean(ts1) > mean(ts2) else [trace1, trace0]
     fig = dict(data=data, layout=layout)
     return div_output(fig)
 
@@ -101,10 +98,7 @@ def ts_trend(ts, t, percent=True):
 
     Returns: hmtl output of an interactive timeseries plot
     """
-    if percent:
-        y = list(map(lambda x: x * 100, ts))
-    else:
-        y = list(ts)
+    y = list(map(lambda x: x * 100, ts)) if percent else list(ts)
     trace0 = line(
         x=t,
         y=y,
